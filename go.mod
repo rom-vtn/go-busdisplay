@@ -1,6 +1,6 @@
 module github.com/rom-vtn/go-display
 
-go 1.22.1
+go 1.22.4
 
 require (
 	github.com/rom-vtn/go-nexttransit v0.0.0-20240902222833-302989aae407
