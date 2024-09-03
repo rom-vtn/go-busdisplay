@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	nexttransit "github.com/rom-vtn/go-nexttransit"
 )
@@ -87,7 +88,9 @@ func getNowPlayingResult(config Config, request Request) (NowPlayingResult, erro
 }
 
 func getBusResults(config Config, request Request) ([]NextBusResult, error) {
-	sights, err := nexttransit.GetNextBuses(request.BusRequest.Lat, request.BusRequest.Lon, config.GtfsDirectoryPath)
+	tz, _ := time.LoadLocation(config.TimezoneName)
+	_, offSecs := time.Now().In(tz).Zone()
+	sights, err := nexttransit.GetNextBuses(request.BusRequest.Lat, request.BusRequest.Lon, config.GtfsDirectoryPath, time.Now(), time.Duration(offSecs)*time.Second)
 	if err != nil {
 		return nil, err
 	}

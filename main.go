@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	IsServer bool `json:"is_server"`
+	IsServer     bool   `json:"is_server"`
+	TimezoneName string `json:"tz_name"`
 	//server-side
 	HostPort          uint16 `json:"host_port"`
 	GtfsDirectoryPath string `json:"gtfs_directory_path"`

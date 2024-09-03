@@ -5,7 +5,9 @@ github.com/artonge/go-gtfs v1.3.4 h1:oq2b+le5wZ1ObHNZj1foL4KfLymFCElKpFm5CwEWQq4
 github.com/artonge/go-gtfs v1.3.4/go.mod h1:45z7Orxlb8DeaDf62oWYiQdm2U6mANlbBLK/ojTEyiY=
 github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2 h1:Bpecy8A24LtdIGkRUQTzoWf2mR0zkvxzAgTN5iP2iXM=
 github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2/go.mod h1:bMLIIHSjkThym5s6mFw/1rkPjtUDvbxSK4xTe/ai2AM=
-github.com/rom-vtn/go-nexttransit v0.0.0-20240902222833-302989aae407 h1:oPWOXi+IFylzmnt8SfIdIAf/TSRrO680oO5Plw5979g=
-github.com/rom-vtn/go-nexttransit v0.0.0-20240902222833-302989aae407/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
+github.com/rom-vtn/go-nexttransit v0.0.0-20240903195407-dd7f4ccf1f57 h1:OzpaWTyc4mcbLUv2217E6l50Py7paLpO7Ixss2T8Xac=
+github.com/rom-vtn/go-nexttransit v0.0.0-20240903195407-dd7f4ccf1f57/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
+github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9 h1:Rw8hlSPvPIjBthGyR9nlUiRTx5ezOonvYGJy0n7SNlY=
+github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
 github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4 h1:7pS5GJuQVpAmGOUHJbY+zPnxbcPCi7CjYLRU80lmJbg=
 github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
