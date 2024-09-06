@@ -31,7 +31,18 @@ func runClient(config Config) error {
 	//get responses every 30 secs
 	responseChan := make(chan Response, 5) //add a bit of buffer
 	go getResponses(responseChan, 30*time.Second, config)
-
+	responseChan <- Response{
+		NowPlaying: NowPlayingResult{
+			IsPlaying: true,
+			Artist:    "Sample Artist",
+			Title:     "Sample Song",
+		},
+		NextBuses: []NextBusResult{{
+			Headsign:    "Headsign",
+			LineName:    "Line",
+			PassingTime: time.Now().Add(30 * time.Minute),
+		}},
+	}
 	for response := range responseChan {
 
 		err = displayBuses(ss, response, config)
@@ -80,7 +91,7 @@ func displayClock(ss *gomax7219.SpiScreen, config Config) error {
 	timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, timeString)
 	timeFitting := gomax7219.NewFitInsideGrid(timeRender, 8*config.CascadeCount-uint(len(clockIcon)))
 	concat := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{clockIcon, timeFitting})
-	err := ss.Draw(concat, 100*time.Millisecond)
+	err := ss.Draw(concat, 20*time.Millisecond)
 	if err != nil {
 		return err
 	}
@@ -100,8 +111,6 @@ func getResponses(c chan Response, fetchDelay time.Duration, config Config) {
 func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
 	now := time.Now()
 
-	tramIcon := gomax7219.NewRawGridFromPattern(gomax7219.TramRefString)
-
 	var currentNextPassingTimes []NextBusResult
 	for _, nextResult := range response.NextBuses {
 		if len(currentNextPassingTimes) > 3 {
@@ -114,15 +123,16 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 	}
 
 	for _, npt := range currentNextPassingTimes {
+		lineRender := gomax7219.NewFitInsideGrid(gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, npt.LineName), 16)
 		minutesLeft := time.Until(npt.PassingTime).Minutes()
 		timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, strconv.Itoa(int(minutesLeft)))
-		spaceLeftForHeadsign := 8*int(config.CascadeCount) - len(tramIcon) - len(timeRender)
+		spaceLeftForHeadsign := 8*config.CascadeCount - lineRender.GetWidth() - timeRender.GetWidth()
 		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, npt.Headsign)
-		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, uint(spaceLeftForHeadsign))
-		concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{tramIcon, scrollingHeadsign, timeRender})
+		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, spaceLeftForHeadsign)
+		concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{lineRender, scrollingHeadsign, timeRender})
 		repeated := gomax7219.NewRepeatGrid(concatRender, 2)
 
-		err := ss.Draw(repeated, 100*time.Millisecond)
+		err := ss.Draw(repeated, 10*time.Millisecond)
 		if err != nil {
 			return err
 		}
