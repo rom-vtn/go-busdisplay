@@ -30,7 +30,7 @@ func runClient(config Config) error {
 
 	//get responses every 30 secs
 	responseChan := make(chan Response, 5) //add a bit of buffer
-	go getResponses(responseChan, 30*time.Second)
+	go getResponses(responseChan, 30*time.Second, config)
 
 	for response := range responseChan {
 
@@ -87,9 +87,9 @@ func displayClock(ss *gomax7219.SpiScreen, config Config) error {
 	return nil
 }
 
-func getResponses(c chan Response, fetchDelay time.Duration) {
+func getResponses(c chan Response, fetchDelay time.Duration, config Config) {
 	for range time.Tick(fetchDelay) {
-		response, err := sendServerRequest()
+		response, err := sendServerRequest(config)
 		if err != nil {
 			log.Default().Printf("[INFO] could not get server response: %s\n", err.Error())
 		}
@@ -131,7 +131,7 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 	return nil
 }
 
-func sendServerRequest() (Response, error) {
+func sendServerRequest(config Config) (Response, error) {
 	req := Request{
 		WantNowPlaying: true,
 		BusRequest: struct {
@@ -149,7 +149,7 @@ func sendServerRequest() (Response, error) {
 		return Response{}, err
 	}
 
-	httpResponse, err := http.DefaultClient.Post(serverConfig.ServerAddress, "application/json", bytes.NewReader(reqBytes))
+	httpResponse, err := http.DefaultClient.Post(config.ServerAddress, "application/json", bytes.NewReader(reqBytes))
 	if err != nil {
 		return Response{}, err
 	}
