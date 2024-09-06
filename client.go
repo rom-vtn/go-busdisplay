@@ -71,7 +71,7 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 		remainingWidth)
 	concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{hpIcon, scrollingRender})
 
-	return ss.Draw(concatRender, 100*time.Millisecond)
+	return ss.Draw(concatRender, 20*time.Millisecond)
 }
 
 func displayClock(ss *gomax7219.SpiScreen, config Config) error {
