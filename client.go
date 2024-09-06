@@ -149,8 +149,8 @@ func sendServerRequest(config Config) (Response, error) {
 			Lon       float64 "json:\"lon\""
 			WantBuses bool    "json:\"want_buses\""
 		}{
-			Lat:       serverConfig.Latitude,
-			Lon:       serverConfig.Longitude,
+			Lat:       config.Latitude,
+			Lon:       config.Longitude,
 			WantBuses: true,
 		},
 	}
@@ -168,6 +168,8 @@ func sendServerRequest(config Config) (Response, error) {
 	if err != nil {
 		return Response{}, err
 	}
+
+	fmt.Printf("string(respBytes): %v\n", string(respBytes))
 
 	var reponse Response
 	err = json.Unmarshal(respBytes, &reponse)
