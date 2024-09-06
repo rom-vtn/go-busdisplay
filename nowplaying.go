@@ -159,10 +159,15 @@ func getStatusAndUpdateToken(config Config) (NowPlayingResult, error) {
 		return NowPlayingResult{}, nil
 	}
 
+	var artistNames []string
+	for _, artist := range snpr.Item.Artists {
+		artistNames = append(artistNames, artist.Name)
+	}
+
 	npr := NowPlayingResult{
 		IsPlaying:   snpr.IsPlaying,
 		ContentType: snpr.CurrentlyPlayingType,
-		Artist:      snpr.Item.Artists[0].Name,
+		Artist:      strings.Join(artistNames, ", "),
 		Title:       snpr.Item.Name,
 	}
 	return npr, nil
