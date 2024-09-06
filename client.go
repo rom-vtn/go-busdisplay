@@ -169,8 +169,6 @@ func sendServerRequest(config Config) (Response, error) {
 		return Response{}, err
 	}
 
-	fmt.Printf("string(respBytes): %v\n", string(respBytes))
-
 	var reponse Response
 	err = json.Unmarshal(respBytes, &reponse)
 	if err != nil {
