@@ -14,6 +14,8 @@ import (
 	gomax7219 "github.com/rom-vtn/gomax7219"
 )
 
+const DISPLAY_DELAY = 15 * time.Millisecond
+
 func runClient(config Config) error {
 	ss, err := gomax7219.NewDeviceAndOpen(
 		config.SpiBus,
@@ -73,7 +75,7 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 		return nil
 	}
 
-	hpIcon := gomax7219.NewRawGridFromPattern(gomax7219.TrainRefString) //TODO replace with headphone icon
+	hpIcon := gomax7219.NewRawGridFromPattern(gomax7219.HeadphonesRefString)
 	remainingWidth := config.CascadeCount*8 - hpIcon.GetWidth()
 
 	nowPlayingText := fmt.Sprintf("Now Playing: %s - %s", response.NowPlaying.Artist, response.NowPlaying.Title)
@@ -82,7 +84,7 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 		remainingWidth)
 	concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{hpIcon, scrollingRender})
 
-	return ss.Draw(concatRender, 20*time.Millisecond)
+	return ss.Draw(concatRender, DISPLAY_DELAY)
 }
 
 func displayClock(ss *gomax7219.SpiScreen, config Config) error {
@@ -91,7 +93,7 @@ func displayClock(ss *gomax7219.SpiScreen, config Config) error {
 	timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, timeString)
 	timeFitting := gomax7219.NewFitInsideGrid(timeRender, 8*config.CascadeCount-uint(len(clockIcon)))
 	concat := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{clockIcon, timeFitting})
-	err := ss.Draw(concat, 20*time.Millisecond)
+	err := ss.Draw(concat, DISPLAY_DELAY)
 	if err != nil {
 		return err
 	}
@@ -132,7 +134,7 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 		concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{lineRender, scrollingHeadsign, timeRender})
 		repeated := gomax7219.NewRepeatGrid(concatRender, 2)
 
-		err := ss.Draw(repeated, 10*time.Millisecond)
+		err := ss.Draw(repeated, DISPLAY_DELAY)
 		if err != nil {
 			return err
 		}

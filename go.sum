@@ -11,3 +11,5 @@ github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9 h1:Rw8hlSPv
 github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
 github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4 h1:7pS5GJuQVpAmGOUHJbY+zPnxbcPCi7CjYLRU80lmJbg=
 github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
+github.com/rom-vtn/gomax7219 v0.0.0-20240906210700-1b5d856cf140 h1:1Fn/6XBPD5+hkq0AjpZ5myebbw/qWxM9UHbCGU+7o/U=
+github.com/rom-vtn/gomax7219 v0.0.0-20240906210700-1b5d856cf140/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
