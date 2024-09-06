@@ -45,7 +45,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var nowPlayingResult NowPlayingResult
 	if request.WantNowPlaying {
-		nowPlayingResult, err = getNowPlayingResult(serverConfig, request)
+		nowPlayingResult, err = getStatusAndUpdateToken(serverConfig)
 		if err != nil {
 			sendError(w, err)
 			return
@@ -80,11 +80,6 @@ func sendError(w http.ResponseWriter, err error) {
 		log.Fatal(err)
 	}
 	w.Write(response)
-}
-
-func getNowPlayingResult(config Config, request Request) (NowPlayingResult, error) {
-	//TODO do the now playing
-	return NowPlayingResult{}, nil
 }
 
 func getBusResults(config Config, request Request) ([]NextBusResult, error) {

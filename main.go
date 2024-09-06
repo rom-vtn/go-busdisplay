@@ -11,8 +11,11 @@ type Config struct {
 	IsServer     bool   `json:"is_server"`
 	TimezoneName string `json:"tz_name"`
 	//server-side
-	HostPort          uint16 `json:"host_port"`
-	GtfsDirectoryPath string `json:"gtfs_directory_path"`
+	HostPort            uint16 `json:"host_port"`
+	GtfsDirectoryPath   string `json:"gtfs_directory_path"`
+	SpotifyClientId     string `json:"spotify_client_id"`
+	SpotifyClientSecret string `json:"spotify_client_secret"`
+	SpotifyRefreshToken string `json:"spotify_refresh_token"`
 	//client-side
 	ServerAddress  string  `json:"server_address"`
 	SpiBus         uint    `json:"spi_bus"`
@@ -43,9 +46,10 @@ type Response struct {
 }
 
 type NowPlayingResult struct {
-	IsPlaying bool   `json:"is_playing"`
-	Artist    string `json:"artist"`
-	Title     string `json:"title"`
+	IsPlaying   bool   `json:"is_playing"`
+	ContentType string `json:"content_type"` //"track" or "podcast"
+	Artist      string `json:"artist"`
+	Title       string `json:"title"`
 }
 type NextBusResult struct {
 	LineName    string    `json:"line_name"`
