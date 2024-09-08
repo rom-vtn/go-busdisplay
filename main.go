@@ -51,6 +51,8 @@ type NowPlayingResult struct {
 	Artist      string `json:"artist"`
 	Title       string `json:"title"`
 }
+
+// represents a bus results as returned from the API
 type NextBusResult struct {
 	LineName    string    `json:"line_name"`
 	Headsign    string    `json:"headsign"`

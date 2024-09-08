@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -110,31 +111,87 @@ func getResponses(c chan Response, fetchDelay time.Duration, config Config) {
 	}
 }
 
-func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
-	now := time.Now()
+// represents a bus result entry *for display purposes* (contains the next 2 passing times)
+type busResultEntry struct {
+	lineName, headsign  string
+	nextTime, afterNext time.Time
+}
 
-	var currentNextPassingTimes []NextBusResult
-	for _, nextResult := range response.NextBuses {
-		if len(currentNextPassingTimes) > 3 {
+// tries adding the time to the passing times, returns true iff all times are now set
+func (bre *busResultEntry) addTime(passingTime time.Time) (hasAllSetTimes bool) {
+	if bre.nextTime.IsZero() {
+		bre.nextTime = passingTime
+		return false
+	}
+	if bre.afterNext.IsZero() {
+		bre.afterNext = passingTime
+		return true
+	}
+	return true
+}
+
+func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
+	now := time.Now()
+	timelessToTimeful := make(map[busResultEntry]busResultEntry) //maps line+headsign to line+headsign+times
+	fullEntryCount := 0                                          // full entry = has both times set
+	for _, nextResult := range nextBuses {
+		if fullEntryCount > 3 {
 			break
 		}
 		if nextResult.PassingTime.Before(now) {
 			continue
 		}
-		currentNextPassingTimes = append(currentNextPassingTimes, nextResult)
+		timelessEntry := busResultEntry{
+			lineName: nextResult.LineName,
+			headsign: nextResult.Headsign,
+		}
+		//read then rewrite
+		timefulEntry, ok := timelessToTimeful[timelessEntry]
+		if !ok {
+			timefulEntry = timelessEntry //get headsign and line from timeless to init
+		}
+		isFull := timefulEntry.addTime(nextResult.PassingTime)
+		if isFull {
+			fullEntryCount++
+		}
+		timelessToTimeful[timelessEntry] = timefulEntry
 	}
+	var nextPassingSlice []busResultEntry
+	for _, v := range timelessToTimeful {
+		nextPassingSlice = append(nextPassingSlice, v)
+	}
+	sort.Slice(nextPassingSlice, func(i, j int) bool {
+		return nextPassingSlice[i].nextTime.Before(nextPassingSlice[j].nextTime)
+	})
 
-	for _, npt := range currentNextPassingTimes {
-		lineRender := gomax7219.NewFitInsideGrid(gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, npt.LineName), 16)
-		minutesLeft := time.Until(npt.PassingTime).Minutes()
-		timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, strconv.Itoa(int(minutesLeft)))
+	return nextPassingSlice
+}
+
+func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
+	nextBusResultEntries := extractBusResultEntries(response.NextBuses)
+
+	for _, entry := range nextBusResultEntries {
+		lineRender := gomax7219.NewFitInsideGrid(gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName), 16)
+		minutesLeftToNext := strconv.Itoa(int(time.Until(entry.nextTime).Minutes()))
+		var minutesLeftToAfterNext string
+		if !entry.afterNext.IsZero() {
+			minutesLeftToAfterNext = strconv.Itoa(int(time.Until(entry.afterNext)))
+		} else {
+			minutesLeftToAfterNext = "END"
+		}
+		minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
+		minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
+		timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{15, 15})
+		if err != nil {
+			return err
+		}
 		spaceLeftForHeadsign := 8*config.CascadeCount - lineRender.GetWidth() - timeRender.GetWidth()
-		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, npt.Headsign)
+		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.headsign)
 		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, spaceLeftForHeadsign)
 		concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{lineRender, scrollingHeadsign, timeRender})
 		repeated := gomax7219.NewRepeatGrid(concatRender, 2)
 
-		err := ss.Draw(repeated, DISPLAY_DELAY)
+		err = ss.Draw(repeated, DISPLAY_DELAY)
 		if err != nil {
 			return err
 		}
