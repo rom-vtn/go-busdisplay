@@ -183,16 +183,12 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 		} else {
 			minutesLeftToAfterNext = "END"
 		}
-		// fmt.Printf("minutesLeftToNext: %v\n", minutesLeftToNext)
-		// fmt.Printf("minutesLeftToAfterNext: %v\n", minutesLeftToAfterNext)
-		// minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
-		// minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
-		// timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
-		// if err != nil {
-		// 	return err
-		// }
-		var err error
-		timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext+"/"+minutesLeftToAfterNext)
+		minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
+		minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
+		timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
+		if err != nil {
+			return err
+		}
 		spaceLeftForHeadsign := 8*config.CascadeCount - lineRender.GetWidth() - timeRender.GetWidth()
 		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.headsign)
 		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, spaceLeftForHeadsign)
