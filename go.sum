@@ -13,3 +13,5 @@ github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4 h1:7pS5GJuQVpAmG
 github.com/rom-vtn/gomax7219 v0.0.0-20240901233018-ba86fa5f62a4/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
 github.com/rom-vtn/gomax7219 v0.0.0-20240906210700-1b5d856cf140 h1:1Fn/6XBPD5+hkq0AjpZ5myebbw/qWxM9UHbCGU+7o/U=
 github.com/rom-vtn/gomax7219 v0.0.0-20240906210700-1b5d856cf140/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
+github.com/rom-vtn/gomax7219 v0.0.0-20240916214043-1665811f8e0e h1:ob3+GOXhOUrVTjy6hTgb/m8qCULxcphWIOKHZ0xkdB0=
+github.com/rom-vtn/gomax7219 v0.0.0-20240916214043-1665811f8e0e/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=

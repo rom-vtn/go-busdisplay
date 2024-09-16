@@ -117,7 +117,7 @@ type busResultEntry struct {
 	nextTime, afterNext time.Time
 }
 
-// tries adding the time to the passing times, returns true iff all times are now set
+// tries adding the time to the passing times, returns true iff all times have just been set
 func (bre *busResultEntry) addTime(passingTime time.Time) (hasAllSetTimes bool) {
 	if bre.nextTime.IsZero() {
 		bre.nextTime = passingTime
@@ -127,15 +127,16 @@ func (bre *busResultEntry) addTime(passingTime time.Time) (hasAllSetTimes bool) 
 		bre.afterNext = passingTime
 		return true
 	}
-	return true
+	return false
 }
 
 func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
 	now := time.Now()
 	timelessToTimeful := make(map[busResultEntry]busResultEntry) //maps line+headsign to line+headsign+times
 	fullEntryCount := 0                                          // full entry = has both times set
+	const DISPLAY_COUNT int = 3
 	for _, nextResult := range nextBuses {
-		if fullEntryCount > 3 {
+		if fullEntryCount > DISPLAY_COUNT {
 			break
 		}
 		if nextResult.PassingTime.Before(now) {
@@ -148,6 +149,9 @@ func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
 		//read then rewrite
 		timefulEntry, ok := timelessToTimeful[timelessEntry]
 		if !ok {
+			if len(timelessToTimeful) > DISPLAY_COUNT { //if all entries are there but not complete then stop adding
+				continue
+			}
 			timefulEntry = timelessEntry //get headsign and line from timeless to init
 		}
 		isFull := timefulEntry.addTime(nextResult.PassingTime)
@@ -156,35 +160,39 @@ func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
 		}
 		timelessToTimeful[timelessEntry] = timefulEntry
 	}
-	var nextPassingSlice []busResultEntry
+	var entriesToShow []busResultEntry
 	for _, v := range timelessToTimeful {
-		nextPassingSlice = append(nextPassingSlice, v)
+		entriesToShow = append(entriesToShow, v)
 	}
-	sort.Slice(nextPassingSlice, func(i, j int) bool {
-		return nextPassingSlice[i].nextTime.Before(nextPassingSlice[j].nextTime)
+	sort.Slice(entriesToShow, func(i, j int) bool {
+		return entriesToShow[i].nextTime.Before(entriesToShow[j].nextTime)
 	})
 
-	return nextPassingSlice
+	return entriesToShow
 }
 
 func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
 	nextBusResultEntries := extractBusResultEntries(response.NextBuses)
 
 	for _, entry := range nextBusResultEntries {
-		lineRender := gomax7219.NewFitInsideGrid(gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName), 16)
+		lineRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName)
 		minutesLeftToNext := strconv.Itoa(int(time.Until(entry.nextTime).Minutes()))
 		var minutesLeftToAfterNext string
 		if !entry.afterNext.IsZero() {
-			minutesLeftToAfterNext = strconv.Itoa(int(time.Until(entry.afterNext)))
+			minutesLeftToAfterNext = strconv.Itoa(int(time.Until(entry.afterNext).Minutes()))
 		} else {
 			minutesLeftToAfterNext = "END"
 		}
-		minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
-		minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
-		timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{15, 15})
-		if err != nil {
-			return err
-		}
+		// fmt.Printf("minutesLeftToNext: %v\n", minutesLeftToNext)
+		// fmt.Printf("minutesLeftToAfterNext: %v\n", minutesLeftToAfterNext)
+		// minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
+		// minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
+		// timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
+		// if err != nil {
+		// 	return err
+		// }
+		var err error
+		timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext+"/"+minutesLeftToAfterNext)
 		spaceLeftForHeadsign := 8*config.CascadeCount - lineRender.GetWidth() - timeRender.GetWidth()
 		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.headsign)
 		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, spaceLeftForHeadsign)
