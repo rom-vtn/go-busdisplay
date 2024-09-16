@@ -79,11 +79,23 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 	hpIcon := gomax7219.NewRawGridFromPattern(gomax7219.HeadphonesRefString)
 	remainingWidth := config.CascadeCount*8 - hpIcon.GetWidth()
 
-	nowPlayingText := fmt.Sprintf("Now Playing: %s - %s", response.NowPlaying.Artist, response.NowPlaying.Title)
-	scrollingRender := gomax7219.NewScrollingGrid(
-		gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, nowPlayingText),
+	nowPlayingRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, "NOW PLAYING")
+	fittedNowPlayingRender := gomax7219.NewFitInsideGrid(nowPlayingRender, remainingWidth)
+
+	artistTitleText := fmt.Sprintf("%s - %s", response.NowPlaying.Artist, response.NowPlaying.Title)
+	artistTitleScrollingRender := gomax7219.NewScrollingGrid(
+		gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, artistTitleText),
 		remainingWidth)
-	concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{hpIcon, scrollingRender})
+
+	MIN_TIME := uint(150)
+	sequenceDisplayTimes := []uint{MIN_TIME, max(MIN_TIME, artistTitleScrollingRender.GetFrameCount())}
+	sequenceRenderers := []gomax7219.Renderer{fittedNowPlayingRender, artistTitleScrollingRender}
+	sequence, err := gomax7219.NewSequenceGrid(sequenceRenderers, sequenceDisplayTimes)
+	if err != nil {
+		return err
+	}
+
+	concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{hpIcon, sequence})
 
 	return ss.Draw(concatRender, DISPLAY_DELAY)
 }
