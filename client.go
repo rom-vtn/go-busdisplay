@@ -186,6 +186,21 @@ func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
 func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
 	nextBusResultEntries := extractBusResultEntries(response.NextBuses)
 
+	if len(nextBusResultEntries) == 0 {
+		return nil //don't show title if empty
+	}
+
+	//display transport title icon
+	tramIcon := gomax7219.NewRawGridFromPattern(gomax7219.TramRefString)
+	text := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, " Bussi ")
+	concat := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{tramIcon, text, tramIcon})
+	fit := gomax7219.NewFitInsideGrid(concat, 8*config.CascadeCount)
+	err := ss.Draw(fit, 0)
+	if err != nil {
+		return err
+	}
+	time.Sleep(150 * DISPLAY_DELAY)
+
 	for _, entry := range nextBusResultEntries {
 		lineRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName)
 		minutesLeftToNext := strconv.Itoa(int(time.Until(entry.nextTime).Minutes()))
