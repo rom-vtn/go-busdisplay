@@ -48,12 +48,12 @@ func runClient(config Config) error {
 	}
 	for response := range responseChan {
 
-		err = displayBuses(ss, response, config)
+		err = displayNowPlaying(ss, response, config)
 		if err != nil {
 			return err
 		}
 
-		err = displayNowPlaying(ss, response, config)
+		err = displayBuses(ss, response, config)
 		if err != nil {
 			return err
 		}
