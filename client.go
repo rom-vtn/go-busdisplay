@@ -183,13 +183,7 @@ func extractBusResultEntries(nextBuses []NextBusResult) []busResultEntry {
 	return entriesToShow
 }
 
-func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
-	nextBusResultEntries := extractBusResultEntries(response.NextBuses)
-
-	if len(nextBusResultEntries) == 0 {
-		return nil //don't show title if empty
-	}
-
+func displayBusesTitleScren(ss *gomax7219.SpiScreen, config Config) error {
 	//display transport title icon
 	tramIcon := gomax7219.NewRawGridFromPattern(gomax7219.TramRefString)
 	text := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, " Bussi ")
@@ -200,6 +194,20 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 		return err
 	}
 	time.Sleep(150 * DISPLAY_DELAY)
+	return nil
+}
+
+func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) error {
+	nextBusResultEntries := extractBusResultEntries(response.NextBuses)
+
+	if len(nextBusResultEntries) == 0 {
+		return nil
+	}
+
+	err := displayBusesTitleScren(ss, config)
+	if err != nil {
+		return err
+	}
 
 	for _, entry := range nextBusResultEntries {
 		lineRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName)
