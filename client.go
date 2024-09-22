@@ -211,15 +211,18 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 
 	for _, entry := range nextBusResultEntries {
 		lineRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName)
-		minutesLeftToNext := strconv.Itoa(int(time.Until(entry.nextTime).Minutes()))
-		var minutesLeftToAfterNext string
-		if !entry.afterNext.IsZero() {
-			minutesLeftToAfterNext = strconv.Itoa(int(time.Until(entry.afterNext).Minutes()))
-		} else {
-			minutesLeftToAfterNext = "END"
+		renderHowManyMinutesUntil := func(t time.Time) gomax7219.Renderer {
+			var timeText string
+			if t.IsZero() {
+				timeText = "END"
+			} else {
+				timeText = strconv.Itoa(int(time.Until(t).Minutes()))
+			}
+			return gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, timeText)
 		}
-		minToNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToNext)
-		minToAfterNextRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, minutesLeftToAfterNext)
+		minToNextRender := renderHowManyMinutesUntil(entry.nextTime)
+		minToAfterNextRender := renderHowManyMinutesUntil(entry.afterNext)
+
 		timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
 		if err != nil {
 			return err
