@@ -83,7 +83,10 @@ func sendError(w http.ResponseWriter, err error) {
 }
 
 func getBusResults(config Config, request Request) ([]NextBusResult, error) {
-	tz, _ := time.LoadLocation(config.TimezoneName)
+	tz, err := time.LoadLocation(config.TimezoneName)
+	if err != nil {
+		return nil, err
+	}
 	_, offSecs := time.Now().In(tz).Zone()
 	sights, err := nexttransit.GetNextBuses(request.BusRequest.Lat, request.BusRequest.Lon, config.GtfsDirectoryPath, time.Now(), time.Duration(offSecs)*time.Second)
 	if err != nil {
