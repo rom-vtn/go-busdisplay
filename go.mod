@@ -4,7 +4,7 @@ go 1.22.4
 
 require (
 	github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9
-	github.com/rom-vtn/gomax7219 v0.0.0-20240916214043-1665811f8e0e
+	github.com/rom-vtn/gomax7219 v0.0.0-20250103103125-5b05b8f3272b
 )
 
 require (

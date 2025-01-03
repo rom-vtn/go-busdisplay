@@ -79,12 +79,12 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 	hpIcon := gomax7219.NewRawGridFromPattern(gomax7219.HeadphonesRefString)
 	remainingWidth := config.CascadeCount*8 - hpIcon.GetWidth()
 
-	nowPlayingRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, "NOW PLAYING")
+	nowPlayingRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, "Now Playing")
 	fittedNowPlayingRender := gomax7219.NewFitInsideGrid(nowPlayingRender, remainingWidth)
 
 	artistTitleText := fmt.Sprintf("%s - %s", response.NowPlaying.Artist, response.NowPlaying.Title)
 	artistTitleScrollingRender := gomax7219.NewScrollingGrid(
-		gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, artistTitleText),
+		gomax7219.NewStringTextRender(INTERPIXELIA_FONT, artistTitleText),
 		remainingWidth)
 
 	MIN_TIME := uint(150)
@@ -103,7 +103,7 @@ func displayNowPlaying(ss *gomax7219.SpiScreen, response Response, config Config
 func displayClock(ss *gomax7219.SpiScreen, config Config) error {
 	clockIcon := gomax7219.NewRawGridFromPattern(gomax7219.ClockRefString)
 	timeString := time.Now().Format("15:04:05")
-	timeRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, timeString)
+	timeRender := gomax7219.NewStringTextRender(INTERPIXELIA_FONT, timeString)
 	timeFitting := gomax7219.NewFitInsideGrid(timeRender, 8*config.CascadeCount-uint(len(clockIcon)))
 	concat := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{clockIcon, timeFitting})
 	err := ss.Draw(concat, DISPLAY_DELAY)
@@ -209,34 +209,42 @@ func displayBuses(ss *gomax7219.SpiScreen, response Response, config Config) err
 		return err
 	}
 
+	var busRenderers []gomax7219.Renderer
+	var busRendererDurations []uint
 	for _, entry := range nextBusResultEntries {
 		lineRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.lineName)
 		renderHowManyMinutesUntil := func(t time.Time) gomax7219.Renderer {
 			var timeText string
 			if t.IsZero() {
-				timeText = "END"
+				timeText = "\u2757"
 			} else {
 				timeText = strconv.Itoa(int(time.Until(t).Minutes()))
 			}
-			return gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, timeText)
+			return gomax7219.NewStringTextRender(INTERPIXELIA_FONT, timeText)
 		}
 		minToNextRender := renderHowManyMinutesUntil(entry.nextTime)
 		minToAfterNextRender := renderHowManyMinutesUntil(entry.afterNext)
 
-		timeRender, err := gomax7219.NewSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
+		timeRender, err := gomax7219.NewVerticalSequenceGrid([]gomax7219.Renderer{minToNextRender, minToAfterNextRender}, []uint{60, 60})
 		if err != nil {
 			return err
 		}
 		spaceLeftForHeadsign := 8*config.CascadeCount - lineRender.GetWidth() - timeRender.GetWidth()
-		headsignRender := gomax7219.NewStringTextRender(gomax7219.ATARI_FONT, entry.headsign)
+		headsignRender := gomax7219.NewStringTextRender(INTERPIXELIA_FONT, entry.headsign)
 		scrollingHeadsign := gomax7219.NewScrollingGrid(headsignRender, spaceLeftForHeadsign)
 		concatRender := gomax7219.NewConcatenateGrid([]gomax7219.Renderer{lineRender, scrollingHeadsign, timeRender})
 		repeated := gomax7219.NewRepeatGrid(concatRender, 2)
 
-		err = ss.Draw(repeated, DISPLAY_DELAY)
-		if err != nil {
-			return err
-		}
+		busRenderers = append(busRenderers, repeated)
+		busRendererDurations = append(busRendererDurations, repeated.GetFrameCount())
+	}
+	allBusesRenderer, err := gomax7219.NewVerticalSequenceGrid(busRenderers, busRendererDurations)
+	if err != nil {
+		return err
+	}
+	err = ss.Draw(allBusesRenderer, DISPLAY_DELAY)
+	if err != nil {
+		return err
 	}
 
 	return nil
