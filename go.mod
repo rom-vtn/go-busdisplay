@@ -3,7 +3,7 @@ module github.com/rom-vtn/go-display
 go 1.22.4
 
 require (
-	github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9
+	github.com/rom-vtn/go-nexttransit v0.0.0-20250128211800-8d6692cbe49b
 	github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33
 )
 
