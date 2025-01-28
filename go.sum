@@ -7,5 +7,5 @@ github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2 h1:Bpecy8A24LtdIGkRUQT
 github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2/go.mod h1:bMLIIHSjkThym5s6mFw/1rkPjtUDvbxSK4xTe/ai2AM=
 github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9 h1:Rw8hlSPvPIjBthGyR9nlUiRTx5ezOonvYGJy0n7SNlY=
 github.com/rom-vtn/go-nexttransit v0.0.0-20240903202827-eeb5854ba6f9/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
-github.com/rom-vtn/gomax7219 v0.0.0-20250103103125-5b05b8f3272b h1:g72gzJ72oC3pfCJtp87JZqKjWY2vpLyecEwbm+SDwLw=
-github.com/rom-vtn/gomax7219 v0.0.0-20250103103125-5b05b8f3272b/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
+github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33 h1:Fy1yzOoa/67/w70yxAkggqnt8VoYsSaKleNQCMq9FHE=
+github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
