@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"sort"
 	"strconv"
 	"time"
@@ -268,7 +269,19 @@ func sendServerRequest(config Config) (Response, error) {
 		return Response{}, err
 	}
 
-	httpResponse, err := http.DefaultClient.Post(config.ServerAddress, "application/json", bytes.NewReader(reqBytes))
+	proxyUrl, err := url.Parse(config.Socks5Proxy)
+	if err != nil {
+		return Response{}, err
+	}
+
+	proxyFunc := http.ProxyURL(proxyUrl)
+	proxyClient := http.Client{
+		Transport: &http.Transport{
+			Proxy: proxyFunc,
+		},
+	}
+
+	httpResponse, err := proxyClient.Post(config.ServerAddress, "application/json", bytes.NewReader(reqBytes))
 	if err != nil {
 		return Response{}, err
 	}

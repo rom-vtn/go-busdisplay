@@ -27,6 +27,7 @@ type Config struct {
 	FlipVertical   bool    `json:"flip_vertical"`
 	Latitude       float64 `json:"latitude"`
 	Longitude      float64 `json:"longitude"`
+	Socks5Proxy    string  `json:"socks5_proxy"`
 }
 
 type Request struct {
