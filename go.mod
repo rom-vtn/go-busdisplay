@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/NYTimes/gziphandler v1.1.1 // indirect
 	github.com/artonge/go-csv-tag/v2 v2.5.0 // indirect
 	github.com/artonge/go-gtfs v1.3.4 // indirect
 	github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2 // indirect
