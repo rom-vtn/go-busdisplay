@@ -4,3 +4,5 @@
 
 go-display
 *.exe
+
+vendor/

@@ -5,6 +5,7 @@ go 1.22.4
 require (
 	github.com/rom-vtn/go-nexttransit v0.0.0-20250128211800-8d6692cbe49b
 	github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33
+	github.com/NYTimes/gziphandler v1.1.1
 )
 
 require (

@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"time"
 
+	gziphandler "github.com/NYTimes/gziphandler"
+
 	nexttransit "github.com/rom-vtn/go-nexttransit"
 )
 
@@ -15,11 +17,15 @@ var serverConfig Config
 
 func runServer(config Config) error {
 	serverConfig = config //set global var
-	http.Handle("POST /", http.HandlerFunc(requestHandler))
+	http.Handle("POST /", gzipHandler(requestHandler))
 
 	listenString := ":" + fmt.Sprint(config.HostPort)
 	log.Default().Printf("Listening on %s", listenString)
 	return http.ListenAndServe(listenString, nil)
+}
+
+func gzipHandler(f func(http.ResponseWriter, *http.Request)) http.Handler {
+	return gziphandler.GzipHandler(http.HandlerFunc(f))
 }
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
