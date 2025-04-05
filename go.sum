@@ -5,13 +5,16 @@ github.com/artonge/go-csv-tag/v2 v2.5.0 h1:eSMctuimkUOESeCPSeub0ScfByvTEnQCUMz06
 github.com/artonge/go-csv-tag/v2 v2.5.0/go.mod h1:MhLKePA0uu/+2jUJ4IER31uhRV/0GsIKyrSqSRR7Mkc=
 github.com/artonge/go-gtfs v1.3.4 h1:oq2b+le5wZ1ObHNZj1foL4KfLymFCElKpFm5CwEWQq4=
 github.com/artonge/go-gtfs v1.3.4/go.mod h1:45z7Orxlb8DeaDf62oWYiQdm2U6mANlbBLK/ojTEyiY=
+github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2 h1:Bpecy8A24LtdIGkRUQTzoWf2mR0zkvxzAgTN5iP2iXM=
 github.com/fulr/spidev v0.0.0-20150210165549-524e13e3fac2/go.mod h1:bMLIIHSjkThym5s6mFw/1rkPjtUDvbxSK4xTe/ai2AM=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rom-vtn/go-nexttransit v0.0.0-20250128211800-8d6692cbe49b h1:QA+dKymB1gLZo15C91O4VJcZYpc4ATWaOfMSTF8u/Vw=
 github.com/rom-vtn/go-nexttransit v0.0.0-20250128211800-8d6692cbe49b/go.mod h1:eHz+FaUdUOrnrczYhx3/WumsxuhFOMzvlZv0DKXovb0=
 github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33 h1:Fy1yzOoa/67/w70yxAkggqnt8VoYsSaKleNQCMq9FHE=
 github.com/rom-vtn/gomax7219 v0.0.0-20250109111608-cb36f7798c33/go.mod h1:bXrllsyYqDcRE45Vm3GcImFeUMuSE2EykYl0Rk2BmrA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
