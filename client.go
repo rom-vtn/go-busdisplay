@@ -16,6 +16,11 @@ import (
 	gomax7219 "github.com/rom-vtn/gomax7219"
 )
 
+var nextBusResults []NextBusResult
+var nextBusResultsLastUpdate time.Time
+
+const BUS_UPDATE_DELAY = 30 * time.Minute
+
 const DISPLAY_DELAY = 15 * time.Millisecond
 
 func runClient(config Config) error {
@@ -33,7 +38,7 @@ func runClient(config Config) error {
 	defer ss.Close()
 
 	//get responses every 30 secs
-	responseChan := make(chan Response, 5) //add a bit of buffer
+	responseChan := make(chan Response, 2) //add a bit of buffer, not too much to prevent delays when displaying
 	go getResponses(responseChan, 30*time.Second, config)
 	responseChan <- Response{
 		NowPlaying: NowPlayingResult{
@@ -261,7 +266,7 @@ func sendServerRequest(config Config) (Response, error) {
 		}{
 			Lat:       config.Latitude,
 			Lon:       config.Longitude,
-			WantBuses: true,
+			WantBuses: nextBusResultsLastUpdate.Add(BUS_UPDATE_DELAY).Before(time.Now()),
 		},
 	}
 	reqBytes, err := json.Marshal(req)
@@ -291,10 +296,17 @@ func sendServerRequest(config Config) (Response, error) {
 		return Response{}, err
 	}
 
-	var reponse Response
-	err = json.Unmarshal(respBytes, &reponse)
+	var response Response
+	err = json.Unmarshal(respBytes, &response)
 	if err != nil {
 		return Response{}, err
 	}
-	return reponse, nil
+
+	if response.NextBuses != nil {
+		nextBusResults = response.NextBuses
+		nextBusResultsLastUpdate = time.Now()
+	}
+	response.NextBuses = nextBusResults
+
+	return response, nil
 }
